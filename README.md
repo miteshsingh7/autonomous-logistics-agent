@@ -76,20 +76,8 @@ orchestrator ─► assessor (get_telemetry)
             ─► executor (execute_reroute)
 ```
 
-## Regenerate the slide deck
 
-```bash
-python scripts/build_deck.py     # writes deck/presentation.pptx (uses live scorecards if present)
-```
 
-## Putting this on GitHub
-
-```bash
-git init && git add . && git commit -m "Autonomous rerouting agent + trajectory eval"
-git branch -M main
-git remote add origin <your-repo-url>
-git push -u origin main
-```
 
 ## Evaluation approach in one paragraph
 
