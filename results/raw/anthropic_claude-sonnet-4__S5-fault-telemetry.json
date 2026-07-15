@@ -1,0 +1,214 @@
+{
+  "scenario": "S5-fault-telemetry",
+  "model": "anthropic/claude-sonnet-4",
+  "decision": {
+    "action": "rerouted",
+    "carrier": "AirBridge",
+    "route": "air freight",
+    "eta_hours": 12,
+    "cost_usd": 9800
+  },
+  "trajectory": [
+    {
+      "kind": "observation",
+      "agent": "orchestrator",
+      "tool": "alert",
+      "args": {},
+      "content": "ALERT SHP-003: Sensor gateway flapping; first telemetry read fails. (severity=medium)",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "First assess the shipment by pulling live telemetry.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {
+        "shipment_id": "SHP-003"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "error",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {},
+      "content": "telemetry gateway unavailable (504); retry advised",
+      "ok": false
+    },
+    {
+      "kind": "thought",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "The get_telemetry call failed with a transient error. Retrying the same tool with corrected/identical args.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {
+        "shipment_id": "SHP-003"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-003\", \"origin\": \"Seattle, WA\", \"destination\": \"Denver, CO\", \"carrier\": \"PeakFreight\", \"eta_hours\": 28, \"value_usd\": 90000, \"status\": \"in_transit\"}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "Telemetry confirms an at-risk shipment (severity=medium). A reroute is warranted.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "{\"reroute_needed\": true, \"reason\": \"severity=medium\"}",
+      "ok": null
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "Enumerate alternative carriers/routes for the shipment.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "planner",
+      "tool": "find_alternatives",
+      "args": {
+        "shipment_id": "SHP-003"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "planner",
+      "tool": "find_alternatives",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-003\", \"alternatives\": [{\"carrier\": \"PeakFreight\", \"route\": \"I-70 via Salt Lake\", \"eta_hours\": 34, \"cost_usd\": 2100, \"reliability\": 0.8}, {\"carrier\": \"SummitRail\", \"route\": \"intermodal rail\", \"eta_hours\": 40, \"cost_usd\": 1500, \"reliability\": 0.95}, {\"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 12, \"cost_usd\": 9800, \"reliability\": 0.98}]}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "Validate a firm quote for AirBridge on cost/ETA before recommending it.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "planner",
+      "tool": "estimate_cost_eta",
+      "args": {
+        "shipment_id": "SHP-003",
+        "carrier": "AirBridge",
+        "route": "air freight"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "planner",
+      "tool": "estimate_cost_eta",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-003\", \"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 12, \"cost_usd\": 9800, \"reliability\": 0.98}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "AirBridge has the best reliability-adjusted ETA (12h, $9800, reliability 0.98). Recommending it.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "{\"selected\": {\"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 12, \"cost_usd\": 9800}, \"reason\": \"best reliability-adjusted ETA at reasonable cost\"}",
+      "ok": null
+    },
+    {
+      "kind": "thought",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "Committing the reroute via AirBridge on 'air freight'.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "executor",
+      "tool": "execute_reroute",
+      "args": {
+        "shipment_id": "SHP-003",
+        "carrier": "AirBridge",
+        "route": "air freight"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "executor",
+      "tool": "execute_reroute",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-003\", \"carrier\": \"AirBridge\", \"route\": \"air freight\", \"dispatch_id\": \"DSP-003-AIR\", \"status\": \"rerouted\"}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "Dispatch confirmed. Reroute complete.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "{\"action\": \"rerouted\", \"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 12, \"cost_usd\": 9800}",
+      "ok": null
+    }
+  ],
+  "scorecard": {
+    "scenario_id": "S5-fault-telemetry",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 1.0,
+    "error_recovery": 1.0,
+    "task_success": 1.0,
+    "steps": 5,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 1.0
+  }
+}

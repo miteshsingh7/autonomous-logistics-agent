@@ -1,0 +1,112 @@
+[
+  {
+    "scenario_id": "S1-weather-delay",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.9,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 4,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.965
+  },
+  {
+    "scenario_id": "S2-breakdown",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.9,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 4,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.965
+  },
+  {
+    "scenario_id": "S3-highvalue-air",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.9,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 4,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.965
+  },
+  {
+    "scenario_id": "S4-fault-alternatives",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 1.0,
+    "error_recovery": 1.0,
+    "task_success": 1.0,
+    "steps": 5,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 1.0
+  },
+  {
+    "scenario_id": "S5-fault-telemetry",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 1.0,
+    "error_recovery": 1.0,
+    "task_success": 1.0,
+    "steps": 5,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 1.0
+  },
+  {
+    "scenario_id": "S1-weather-delay",
+    "model": "open:meta/llama-3.3-70b-instruct",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.7,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 3,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.894
+  },
+  {
+    "scenario_id": "S2-breakdown",
+    "model": "open:meta/llama-3.3-70b-instruct",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.7,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 3,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.894
+  },
+  {
+    "scenario_id": "S3-highvalue-air",
+    "model": "open:meta/llama-3.3-70b-instruct",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.7,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 3,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.894
+  },
+  {
+    "scenario_id": "S4-fault-alternatives",
+    "model": "open:meta/llama-3.3-70b-instruct",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.8,
+    "error_recovery": 1.0,
+    "task_success": 1.0,
+    "steps": 4,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.94
+  },
+  {
+    "scenario_id": "S5-fault-telemetry",
+    "model": "open:meta/llama-3.3-70b-instruct",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.8,
+    "error_recovery": 1.0,
+    "task_success": 1.0,
+    "steps": 4,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.94
+  }
+]

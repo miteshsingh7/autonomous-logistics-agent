@@ -1,0 +1,188 @@
+{
+  "scenario": "S1-weather-delay",
+  "model": "anthropic/claude-sonnet-4",
+  "decision": {
+    "action": "rerouted",
+    "carrier": "AirBridge",
+    "route": "air freight",
+    "eta_hours": 9,
+    "cost_usd": 7400
+  },
+  "trajectory": [
+    {
+      "kind": "observation",
+      "agent": "orchestrator",
+      "tool": "alert",
+      "args": {},
+      "content": "ALERT SHP-001: Severe winter storm on I-35 corridor; carrier RoadRunner reporting 8h+ delay. (severity=high)",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "First assess the shipment by pulling live telemetry.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {
+        "shipment_id": "SHP-001"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-001\", \"origin\": \"Chicago, IL\", \"destination\": \"Dallas, TX\", \"carrier\": \"RoadRunner\", \"eta_hours\": 22, \"value_usd\": 48000, \"status\": \"in_transit\"}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "Telemetry confirms an at-risk shipment (severity=high). A reroute is warranted.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "{\"reroute_needed\": true, \"reason\": \"severity=high\"}",
+      "ok": null
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "Enumerate alternative carriers/routes for the shipment.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "planner",
+      "tool": "find_alternatives",
+      "args": {
+        "shipment_id": "SHP-001"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "planner",
+      "tool": "find_alternatives",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-001\", \"alternatives\": [{\"carrier\": \"SwiftHaul\", \"route\": \"I-44 via Tulsa\", \"eta_hours\": 24, \"cost_usd\": 1800, \"reliability\": 0.93}, {\"carrier\": \"RoadRunner\", \"route\": \"I-35 direct\", \"eta_hours\": 30, \"cost_usd\": 1200, \"reliability\": 0.71}, {\"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 9, \"cost_usd\": 7400, \"reliability\": 0.97}]}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "Validate a firm quote for AirBridge on cost/ETA before recommending it.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "planner",
+      "tool": "estimate_cost_eta",
+      "args": {
+        "shipment_id": "SHP-001",
+        "carrier": "AirBridge",
+        "route": "air freight"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "planner",
+      "tool": "estimate_cost_eta",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-001\", \"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 9, \"cost_usd\": 7400, \"reliability\": 0.97}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "AirBridge has the best reliability-adjusted ETA (9h, $7400, reliability 0.97). Recommending it.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "{\"selected\": {\"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 9, \"cost_usd\": 7400}, \"reason\": \"best reliability-adjusted ETA at reasonable cost\"}",
+      "ok": null
+    },
+    {
+      "kind": "thought",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "Committing the reroute via AirBridge on 'air freight'.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "executor",
+      "tool": "execute_reroute",
+      "args": {
+        "shipment_id": "SHP-001",
+        "carrier": "AirBridge",
+        "route": "air freight"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "executor",
+      "tool": "execute_reroute",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-001\", \"carrier\": \"AirBridge\", \"route\": \"air freight\", \"dispatch_id\": \"DSP-001-AIR\", \"status\": \"rerouted\"}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "Dispatch confirmed. Reroute complete.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "{\"action\": \"rerouted\", \"carrier\": \"AirBridge\", \"route\": \"air freight\", \"eta_hours\": 9, \"cost_usd\": 7400}",
+      "ok": null
+    }
+  ],
+  "scorecard": {
+    "scenario_id": "S1-weather-delay",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.9,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 4,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.965
+  }
+}

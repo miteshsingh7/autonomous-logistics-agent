@@ -1,0 +1,188 @@
+{
+  "scenario": "S2-breakdown",
+  "model": "anthropic/claude-sonnet-4",
+  "decision": {
+    "action": "rerouted",
+    "carrier": "SwiftHaul",
+    "route": "I-81 inland",
+    "eta_hours": 17,
+    "cost_usd": 1400
+  },
+  "trajectory": [
+    {
+      "kind": "observation",
+      "agent": "orchestrator",
+      "tool": "alert",
+      "args": {},
+      "content": "ALERT SHP-002: Tractor mechanical failure outside Newark; shipment stalled, high-value perishable cargo. (severity=high)",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "First assess the shipment by pulling live telemetry.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {
+        "shipment_id": "SHP-002"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "assessor",
+      "tool": "get_telemetry",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-002\", \"origin\": \"Newark, NJ\", \"destination\": \"Atlanta, GA\", \"carrier\": \"BlueLine\", \"eta_hours\": 15, \"value_usd\": 12000, \"status\": \"in_transit\"}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "Telemetry confirms an at-risk shipment (severity=high). A reroute is warranted.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "assessor",
+      "tool": null,
+      "args": {},
+      "content": "{\"reroute_needed\": true, \"reason\": \"severity=high\"}",
+      "ok": null
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "Enumerate alternative carriers/routes for the shipment.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "planner",
+      "tool": "find_alternatives",
+      "args": {
+        "shipment_id": "SHP-002"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "planner",
+      "tool": "find_alternatives",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-002\", \"alternatives\": [{\"carrier\": \"BlueLine\", \"route\": \"I-95 reroute\", \"eta_hours\": 19, \"cost_usd\": 900, \"reliability\": 0.88}, {\"carrier\": \"SwiftHaul\", \"route\": \"I-81 inland\", \"eta_hours\": 17, \"cost_usd\": 1400, \"reliability\": 0.9}]}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "Validate a firm quote for SwiftHaul on cost/ETA before recommending it.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "planner",
+      "tool": "estimate_cost_eta",
+      "args": {
+        "shipment_id": "SHP-002",
+        "carrier": "SwiftHaul",
+        "route": "I-81 inland"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "planner",
+      "tool": "estimate_cost_eta",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-002\", \"carrier\": \"SwiftHaul\", \"route\": \"I-81 inland\", \"eta_hours\": 17, \"cost_usd\": 1400, \"reliability\": 0.9}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "SwiftHaul has the best reliability-adjusted ETA (17h, $1400, reliability 0.9). Recommending it.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "planner",
+      "tool": null,
+      "args": {},
+      "content": "{\"selected\": {\"carrier\": \"SwiftHaul\", \"route\": \"I-81 inland\", \"eta_hours\": 17, \"cost_usd\": 1400}, \"reason\": \"best reliability-adjusted ETA at reasonable cost\"}",
+      "ok": null
+    },
+    {
+      "kind": "thought",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "Committing the reroute via SwiftHaul on 'I-81 inland'.",
+      "ok": null
+    },
+    {
+      "kind": "tool_call",
+      "agent": "executor",
+      "tool": "execute_reroute",
+      "args": {
+        "shipment_id": "SHP-002",
+        "carrier": "SwiftHaul",
+        "route": "I-81 inland"
+      },
+      "content": "",
+      "ok": null
+    },
+    {
+      "kind": "observation",
+      "agent": "executor",
+      "tool": "execute_reroute",
+      "args": {},
+      "content": "{\"ok\": true, \"shipment_id\": \"SHP-002\", \"carrier\": \"SwiftHaul\", \"route\": \"I-81 inland\", \"dispatch_id\": \"DSP-002-SWI\", \"status\": \"rerouted\"}",
+      "ok": true
+    },
+    {
+      "kind": "thought",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "Dispatch confirmed. Reroute complete.",
+      "ok": null
+    },
+    {
+      "kind": "final",
+      "agent": "executor",
+      "tool": null,
+      "args": {},
+      "content": "{\"action\": \"rerouted\", \"carrier\": \"SwiftHaul\", \"route\": \"I-81 inland\", \"eta_hours\": 17, \"cost_usd\": 1400}",
+      "ok": null
+    }
+  ],
+  "scorecard": {
+    "scenario_id": "S2-breakdown",
+    "model": "closed:anthropic/claude-sonnet-4",
+    "tool_accuracy": 1.0,
+    "reasoning": 0.9,
+    "error_recovery": null,
+    "task_success": 1.0,
+    "steps": 4,
+    "notes": "validity=1.00 coverage=1.00 ordering=1.00; rerouted as expected; heuristic (mock judge)",
+    "overall": 0.965
+  }
+}
